@@ -5,14 +5,6 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
 const mysql = require("mysql");
 
-const qrcode = require('qrcode');
-
-const speakeasy = require('speakeasy')
-
-const loadIniFile = require('read-ini-file');
-const path = require('path')
-
-const accessFile = path.join(__dirname, '../access.ini')
 
 require('dotenv').config({path: '../../.env'});
 
@@ -21,49 +13,7 @@ router.use(bodyParser.json());
 router.use(cookieParser());
 
 router
-  .route("/auth")
-  .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
-    return res.status(404);
-  })
-  .post(async (req, res) => {
-    const cookies = req.cookies;
-    jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
-
-      let user_id = decoded.user_id;
-
-      var connectionObject = dbConnection();
-      let action_sql = "SELECT user.user_id, auth.otpauth_url, user.auth_active FROM user JOIN auth ON auth.user_id = user.user_id WHERE user.user_id = ?"
-      connectionObject.query(action_sql, [user_id], async function (err, result) {
-        if (err) {
-          console.log(err)
-        }
-        else {
-          if(result.length > 0){//User exists
-            const auth_active = result[0].auth_active
-            const otpauth_url = result[0].otpauth_url
-
-            if(auth_active == 0){
-              qrcode.toDataURL(otpauth_url, function(err, data){
-
-                res.json({auth_active: false, qrCode: data});
-
-              })
-            }
-            else{
-              res.json({auth_active: true})
-            }
-          }else{
-            return res.json({valid: false});
-          }
-        }
-      })
-
-    })
-  })
-
-router
-  .route("/admin")
+  .route("/delete")
   .get(async(req, res) => {
     throw "Error, not supposed to be GET request";
     return res.status(404);
@@ -72,6 +22,39 @@ router
     const cookies = req.cookies;
     jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
       if(decoded.level < 5){
+        console.log("hey")
+      }
+
+      let data = req.body;
+
+      var connectionObject = dbConnection();
+
+      let removeTaskSql = 'DELETE FROM user WHERE user_id = ?';
+      connectionObject.query(removeTaskSql,
+        [data.id],
+        function (err, result) {
+          if (err) {
+            console.log(err);
+          }
+          else{
+            return res.json(result)
+          }
+        })
+      connectionObject.end();
+
+    })
+  })
+
+router
+  .route("/update")
+  .get(async(req, res) => {
+    throw "Error, not supposed to be GET request";
+    return res.status(404);
+  })
+  .post(async (req, res) => {
+    const cookies = req.cookies;
+    jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
+      if(decoded.level != 5){
         return res.status(401).send("Access denied");
       }
       let user_id = decoded.user_id;

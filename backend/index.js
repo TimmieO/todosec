@@ -11,6 +11,7 @@ const userRoutes = require("./routes/user");
 const authenticationRoutes = require("./routes/authentication");
 const fetchData = require("./routes/fetchData");
 const twoFA = require("./routes/2fa");
+const adminAction = require("./routes/admin");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -21,6 +22,7 @@ app.use("/api/user", userRoutes, authenticationRoutes);
 app.use("/api/auth", authenticationRoutes);
 app.use("/api/fetchData", fetchData);
 app.use("/api/2fa", twoFA);
+app.use("/api/admin", adminAction);
 
 app.use(express.static(__dirname + '/public'));
 
