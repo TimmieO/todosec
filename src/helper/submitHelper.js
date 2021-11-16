@@ -29,6 +29,31 @@ export default async function submitHelper(type, data) {
       let status = await submitList(data);
       return status;
     }
+    case 'listEdit':
+    {
+      let status = await submitListEdit(data);
+      return status;
+    }
+    case 'deleteList':
+    {
+      let status = await deleteList(data);
+      return status;
+    }
+    case 'task':
+    {
+      let status = await submitTask(data);
+      return status;
+    }
+    case 'deleteTask':
+    {
+      let status = await deleteTask(data);
+      return status;
+    }
+    case 'taskEdit':
+    {
+      let status = await submitTaskEdit(data);
+      return status;
+    }
   }
   return false;
 }
@@ -139,6 +164,93 @@ async function submitList(data){
   }
 
   let result = await fetchHelper('/api/list/add', settings);
+
+  return result;
+}
+
+async function submitTask(data){
+
+  const dataVal = {
+    listData : data,
+  }
+
+  const settings = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dataVal)
+
+  }
+
+  let result = await fetchHelper('/api/task/add', settings);
+
+  return result;
+}
+
+async function submitTaskEdit(data){
+
+  const dataVal = {
+    editData : data,
+  }
+
+  const settings = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dataVal)
+
+  }
+
+  let result = await fetchHelper('/api/task/update', settings);
+
+  return result;
+}
+async function submitListEdit(data){
+
+  const dataVal = {
+    editData : data,
+  }
+
+  const settings = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dataVal)
+
+  }
+
+  let result = await fetchHelper('/api/list/update', settings);
+
+  return result;
+}
+async function deleteList(data){
+
+  const dataVal = {
+    actionData : data,
+  }
+
+  const settings = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dataVal)
+
+  }
+
+  let result = await fetchHelper('/api/list/delete', settings);
+
+  return result;
+}
+async function deleteTask(data){
+
+  const dataVal = {
+    actionData : data,
+  }
+
+  const settings = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dataVal)
+
+  }
+
+  let result = await fetchHelper('/api/task/delete', settings);
 
   return result;
 }
