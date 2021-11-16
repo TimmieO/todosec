@@ -30,9 +30,9 @@ router
 
       var connectionObject = dbConnection();
 
-      let insertListSql = 'insert into list(user_id, title, bg_color) values (?,?,?)';
-      connectionObject.query(insertListSql,
-        [decoded.user_id,data.title, data.color],
+      let insertTask = 'insert into task(list_id, user_id, title, done) values (?,?,?,?)';
+      connectionObject.query(insertTask,
+        [data.list_id, decoded.user_id, data.title, 0],
         function (err, result) {
           if (err) {
             console.log(err);
@@ -61,14 +61,15 @@ router
       }
       let data = req.body.editData;
 
+
       console.log(data);
 
       var connectionObject = dbConnection();
-      let action_sql = "UPDATE list SET title = ? WHERE id = ?"
+      let action_sql = "UPDATE task SET title = ? WHERE id = ?"
       connectionObject.query(action_sql,
         [
           data.title,
-          data.list_id,
+          data.task_id,
         ],
         async function (err, result) {
           if (err) {
@@ -96,10 +97,8 @@ router
       }
       let list_id = req.body.actionData;
 
-      console.log(list_id, "hey");
-
       var connectionObject = dbConnection();
-      let action_sql = "DELETE FROM list WHERE id = ?"
+      let action_sql = "DELETE FROM task WHERE id = ?"
       connectionObject.query(action_sql,
         [
           list_id
