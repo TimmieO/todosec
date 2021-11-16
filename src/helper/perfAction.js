@@ -1,7 +1,7 @@
 import fetchHelper from './fetchHelper';
 export default async function performAction(data, action){
   const dataVal = {
-    id: data
+    val: data
   }
 
   const settings = {
