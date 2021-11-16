@@ -41,7 +41,6 @@ export default function Admin() {
         submitEdit(rowId);
         break;
       }
-
     }
 
     //Finish this
@@ -52,8 +51,12 @@ export default function Admin() {
     function cancelEdit(rowId){
       setActiveRowEdit(null)
     }
-    function submitEdit(rowId){
+    async function submitEdit(rowId){
+      performAction(editData, "update");
 
+      setActiveRowEdit(null)
+      setEditData({username: null, firstname: null, lastname: null, email: null, level: null })
+      window.location.reload();
     }
   }
 
@@ -68,13 +71,10 @@ export default function Admin() {
   };
 
   const removeUser = async(userId) => {
-    console.log(userId);
     let status = await performAction(userId, "delete");
     console.log(performAction(status))
   }
-  /*
 
-   */
   return (
     <div className="body">
       {console.log(fetchedData)}
