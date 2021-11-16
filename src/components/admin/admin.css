@@ -1,0 +1,14 @@
+.admin-table{
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+.hidden{
+  display: none
+}
+table, td, th{
+  border: 1px solid black;
+}
+
+.admin-table-action-icon{
+}
