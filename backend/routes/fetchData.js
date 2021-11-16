@@ -100,6 +100,38 @@ router
     })
   })
 
+router
+  .route("/list")
+  .get(async(req, res) => {
+    throw "Error, not supposed to be GET request";
+    return res.status(404);
+  })
+  .post(async (req, res) => {
+    const cookies = req.cookies;
+    jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
+      if(decoded.level < 5){
+        return res.status(401).send("Access denied");
+      }
+      let user_id = decoded.user_id;
+
+      var connectionObject = dbConnection();
+      let action_sql = "SELECT id, title, bg_color FROM list"
+      connectionObject.query(action_sql, [user_id], async function (err, result) {
+        if (err) {
+          console.log(err)
+        }
+        else {
+          if(result.length > 0){//User exists
+            res.json({info: result})
+          }else{
+            return res.json({valid: false});
+          }
+        }
+      })
+
+    })
+  })
+
 //Conn to db
 function dbConnection() {
   var con =

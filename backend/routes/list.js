@@ -13,7 +13,7 @@ router.use(bodyParser.json());
 router.use(cookieParser());
 
 router
-  .route("/delete")
+  .route("/add")
   .get(async(req, res) => {
     throw "Error, not supposed to be GET request";
     return res.status(404);
@@ -25,19 +25,21 @@ router
         console.log("hey")
       }
 
-      let data = req.body;
+      let data = req.body.listData;
+      console.log(data);
 
       var connectionObject = dbConnection();
 
-      let removeTaskSql = 'DELETE FROM user WHERE user_id = ?';
+      let removeTaskSql = 'insert into list(title, bg_color) values (?,?)';
       connectionObject.query(removeTaskSql,
-        [data.id],
+        [data.title, data.color],
         function (err, result) {
           if (err) {
             console.log(err);
+            return res.json({success: false})
           }
           else{
-            return res.json(result)
+            return res.json({success: true})
           }
         })
       connectionObject.end();
@@ -73,13 +75,13 @@ router
           data.user_id
         ],
         async function (err, result) {
-        if (err) {
-          console.log(err)
-        }
-        else{
-          console.log(result);
-        }
-      })
+          if (err) {
+            console.log(err)
+          }
+          else{
+            console.log(result);
+          }
+        })
 
     })
   })
