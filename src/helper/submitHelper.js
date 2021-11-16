@@ -24,6 +24,11 @@ export default async function submitHelper(type, data) {
       let status = await submitActivateAuth(data);
       return status;
     }
+    case 'list':
+    {
+      let status = await submitList(data);
+      return status;
+    }
   }
   return false;
 }
@@ -116,6 +121,24 @@ async function submitActivateAuth(data){
   }
 
   let result = await fetchHelper('/api/2fa/activate', settings);
+
+  return result;
+}
+
+async function submitList(data){
+
+  const dataVal = {
+    listData : data,
+  }
+
+  const settings = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dataVal)
+
+  }
+
+  let result = await fetchHelper('/api/list/add', settings);
 
   return result;
 }
