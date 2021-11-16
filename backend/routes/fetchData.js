@@ -109,24 +109,34 @@ router
   .post(async (req, res) => {
     const cookies = req.cookies;
     jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
-      if(decoded.level < 5){
+      if(decoded.level < 1){
         return res.status(401).send("Access denied");
       }
       let user_id = decoded.user_id;
-
+      let retObj = {list: null, task: null};
       var connectionObject = dbConnection();
-      let action_sql = "SELECT id, title, bg_color FROM list"
+      let action_sql = "SELECT id, title, bg_color FROM list WHERE user_id = ?"
       connectionObject.query(action_sql, [user_id], async function (err, result) {
         if (err) {
           console.log(err)
         }
         else {
-          if(result.length > 0){//User exists
-            res.json({info: result})
-          }else{
-            return res.json({valid: false});
-          }
+          retObj.list = result;
+          let action_sql = "SELECT id, list_id, title, done FROM task WHERE user_id = ?"
+          connectionObject.query(action_sql, [user_id], async function (err, result) {
+            if (err) {
+              console.log(err)
+              console.log(user_id)
+            }
+            else {
+              console.log(user_id)
+              retObj.task = result;
+              res.json({retObj})
+            }
+          })
         }
+        connectionObject.end();
+
       })
 
     })
