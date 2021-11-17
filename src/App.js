@@ -7,7 +7,7 @@ import Home from "./components/home/Home";
 import Auth from "./components/auth_input/Auth";
 import Header from "./components/header/Header";
 import Admin from "./components/admin/Admin";
-import List from "./components/list/List";
+import List from "./components/list/Todo";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import checkAccess from "./helper/userHasAccess"

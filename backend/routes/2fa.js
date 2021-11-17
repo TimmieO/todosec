@@ -9,6 +9,8 @@ const speakeasy = require('speakeasy')
 
 require('dotenv').config({path: '../../.env'});
 
+const logHelper = require('../functions/logHelper');
+
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 router.use(cookieParser());
@@ -16,7 +18,7 @@ router.use(cookieParser());
 router
   .route("/validate")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("2fa.js", "Warning", "Validate NOT supposed to be Get")
     return res.status(404);
   })
   .post(async (req, res) => {
@@ -30,6 +32,7 @@ router
       let action_sql = "SELECT secret FROM auth WHERE user_id = ?"
       connectionObject.query(action_sql, [user_id], async function (err, result) {
         if (err) {
+          logHelper("2fa.js", "Warning", err)
           console.log(err)
         }
         else {
@@ -47,15 +50,14 @@ router
               if (verified) {
                 let accessToken = await jwt.sign({user: decoded.user, user_id: decoded.user_id, level: decoded.level, auth: true, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 12)}, process.env.ACCESS_TOKEN_SECRET)
                 res.cookie('SID', accessToken, {maxAge: 1000 * 60 * 60 * 24, httpOnly: true});
-                console.log(accessToken);
                 res.json({verified: true});
               }
               if (!verified) {
-                console.log("hey");
                 res.json({verified: false})
               }
             }
             catch (error){
+              logHelper("2fa.js", "Warning", error)
             }
 
           }else{

@@ -14,29 +14,10 @@ export default function Auth() {
   useEffect(() => {
     getPageData();
   }, []);
-  /*
-    const [loading, setLoading] = useState(true);
-  const accessCheck = async () => {
-    let access = await checkAccess(window.location.pathname)
-    setUserHasAccess(access.access)
-
-    if(access.access == false){
-      window.location.href = "/";
-    }
-    else if(access.access == true && access.path == window.location.pathname){
-
-      setLoading(false)
-    }
-    else{
-      window.location.href = "/";
-    }
-  };
-  */
 
   const getPageData = async () => {
     let data = await fetchPageData(window.location.pathname);
     setFetchedData(data)
-    console.log(data);
   }
 
   //Change text in state onChange

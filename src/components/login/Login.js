@@ -8,28 +8,8 @@ export default function Login() {
     username: null,
     password: null,
   });
-  /*
-  const [userHasAccess, setUserHasAccess] = useState();
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    accessCheck();
-  }, [userHasAccess]);
-
-  const accessCheck = async () => {
-    let access = await checkAccess(window.location.pathname)
-    setUserHasAccess(access.access)
-    if(access.access == false){
-      window.location.href = "/";
-    }
-    else if(access.access == true && access.path == window.location.pathname){
-      setLoading(false)
-    }
-    else{
-      window.location.href = "/";
-    }
-  };
-  */
+  const [statusText, setStatusText] = useState(null);
 
   //Change text in state onChange
   const onChangeUpdateStateText = async (e) => {
@@ -52,6 +32,7 @@ export default function Login() {
     }
     //Wrong info
     if (status.valid == false) {
+      setStatusText(status.message)
     }
   };
 
@@ -60,7 +41,7 @@ export default function Login() {
       <div className="div-form">
         <form action="" className="form">
           <h1 className="form_title">Sign In</h1>
-          <br/>
+          {statusText != null ? <p style={{color: 'red'}}>{statusText}</p> : null }
           <div className="form_div">
             <input
               type="text"

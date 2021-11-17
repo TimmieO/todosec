@@ -5,12 +5,11 @@ let router = express.Router();
 const jwt = require('jsonwebtoken');
 const CryptoJS = require("crypto-js");
 const cookieParser = require('cookie-parser')
-
-const qrcode = require('qrcode');
 const speakeasy = require('speakeasy')
 
-const authenticationRoutes = require("./authentication");
+const logHelper = require('../functions/logHelper');
 
+const userAction = require('../functions/userActions');
 
 require('dotenv').config({path: '../../.env'});
 
@@ -21,7 +20,8 @@ router.use(cookieParser());
 router
   .route("/register")
   .get((req, res) => {
-  console.log("hey");
+    logHelper("user.js", "WARNING", "Register not supposed to be GET")
+
   })
   .post(async function(req, res) {
     var connectionObject = dbConnection();
@@ -34,8 +34,6 @@ router
     let inset_token_sql = 'insert into auth(user_id, secret, otpauth_url) values (?,?,?)';
 
     let pwd_info = encryptPassword(data);
-
-    console.log(pwd_info)
 
     let generatedSecret = speakeasy.generateSecret();
     connectionObject.query(action_sql,
@@ -50,7 +48,8 @@ router
       ],
       function (err, result) {
         if (err) {
-          console.log(err);
+          logHelper("user.js", "WARNING", err)
+
           res.json({message: 'Error', error: true})
         }
         if(!err){
@@ -61,10 +60,10 @@ router
               generatedSecret.otpauth_url
             ],
             function (err, result) {
-              console.log(result);
               if (err) {
                 console.log(err);
 
+                logHelper("user.js", "WARNING", err)
                 res.json({message: 'Error', error: true})
               }
               if(!err){
@@ -77,17 +76,22 @@ router
         connectionObject.end();
 
       })
-
-    console.log("hey2222");
   })
 
 router
   .route("/login")
   .get((req, res) => {
-    console.log("hey");
+    logHelper("user.js", "WARNING", "Login not supposed to be GET")
   })
-  .post((req, res) => {
+  .post(async (req, res) => {
     var connectionObject = dbConnection();
+
+    //Limit attempts
+    let retVal = await userAction.userActions({ip: req.ip, action: "login"});
+
+    if(retVal == false){
+      return res.json({valid: false, message: "Too many attempts by this IP"});
+    }
 
     //Data sent from user
     let data = req.body;
@@ -97,6 +101,8 @@ router
 
     connectionObject.query(get_salt_sql, [data.username], function (err, result) {
       if (err) {
+        logHelper("user.js", "WARNING", err)
+
         console.log(err);
       }
       else{
@@ -107,6 +113,7 @@ router
           let hash_pwd = CryptoJS.SHA256(process.env.PUBLIC_SALT + user_salt + pwd).toString(CryptoJS.enc.Hex);
           connectionObject.query(action_sql, [data.username, hash_pwd], async function (err, result) {
             if (err) {
+              logHelper("user.js", "WARNING", err)
               console.log(err)
             }
             else {
@@ -145,7 +152,8 @@ router
 router
   .route("/countUsername")
   .get((req, res) => {
-    console.log("hey");
+    logHelper("user.js", "WARNING", "countUsername not supposed to be GET")
+
   })
   .post((req, res) => {
     var connectionObject = dbConnection();
@@ -156,6 +164,7 @@ router
 
     connectionObject.query(action_sql, [data.username], function (err, result) {
       if (err) {
+        logHelper("user.js", "WARNING", err)
         console.log(err);
       }
       else{
@@ -170,7 +179,8 @@ router
 router
   .route("/countEmail")
   .get((req, res) => {
-    console.log("hey");
+    logHelper("user.js", "WARNING", "countEmail not supposed to be GET")
+
   })
   .post((req, res) => {
     var connectionObject = dbConnection();
@@ -181,6 +191,7 @@ router
 
     connectionObject.query(action_sql, [data.email], function (err, result) {
       if (err) {
+        logHelper("user.js", "WARNING", err)
         console.log(err);
       }
       else{

@@ -54,13 +54,17 @@ export default async function submitHelper(type, data) {
       let status = await submitTaskEdit(data);
       return status;
     }
+    case 'updateTaskDone':
+    {
+      let status = await updateTaskDone(data);
+      return status;
+    }
   }
   return false;
 }
 
 function ValidateAllInput(obj, value) {
   for(var id in obj) {
-    console.log(obj[id])
 
     if(obj[id].OK == value) {
       return true;
@@ -94,10 +98,7 @@ async function submitRegister(data){
 }
 
 async function submitLogin(data){
-  //Check in regInfo state object if find Ok that == false
-  if(ValidateAllInput(data, false) == true){
-    return;
-  }
+
   const dataVal = {
     username: data.username,
     password: data.password
@@ -251,6 +252,23 @@ async function deleteTask(data){
   }
 
   let result = await fetchHelper('/api/task/delete', settings);
+
+  return result;
+}
+async function updateTaskDone(data){
+
+  const dataVal = {
+    actionData : data,
+  }
+
+  const settings = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dataVal)
+
+  }
+
+  let result = await fetchHelper('/api/task/done', settings);
 
   return result;
 }

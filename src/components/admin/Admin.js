@@ -20,7 +20,6 @@ export default function Admin() {
   const getPageData = async () => {
     let data = await fetchPageData(window.location.pathname);
     setFetchedData(data.info)
-    console.log(fetchedData);
   }
 
   const editTableRow = async(rowId, action) => {
@@ -71,13 +70,12 @@ export default function Admin() {
   };
 
   const removeUser = async(userId) => {
-    let status = await performAction(userId, "delete");
-    console.log(performAction(status))
+    await performAction(userId, "delete");
+
   }
 
   return (
     <div className="body">
-      {console.log(fetchedData)}
       <h1>Admin page</h1>
       <table className="admin-table">
         <thead>
