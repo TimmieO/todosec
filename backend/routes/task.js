@@ -26,7 +26,6 @@ router
       }
 
       let data = req.body.listData;
-      console.log(data);
 
       var connectionObject = dbConnection();
 
@@ -61,9 +60,6 @@ router
       }
       let data = req.body.editData;
 
-
-      console.log(data);
-
       var connectionObject = dbConnection();
       let action_sql = "UPDATE task SET title = ? WHERE id = ?"
       connectionObject.query(action_sql,
@@ -95,13 +91,46 @@ router
       if(decoded.level < 1){
         return res.status(401).send("Access denied");
       }
-      let list_id = req.body.actionData;
+      let task_id = req.body.actionData;
 
       var connectionObject = dbConnection();
       let action_sql = "DELETE FROM task WHERE id = ?"
       connectionObject.query(action_sql,
         [
-          list_id
+          task_id
+        ],
+        async function (err, result) {
+          if (err) {
+            console.log(err)
+          }
+          else{
+            res.json({result});
+          }
+        })
+
+    })
+  })
+
+router
+  .route("/done")
+  .get(async(req, res) => {
+    throw "Error, not supposed to be GET request";
+    return res.status(404);
+  })
+  .post(async (req, res) => {
+    const cookies = req.cookies;
+    jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
+      if(decoded.level < 1){
+        return res.status(401).send("Access denied");
+      }
+      let data = req.body.actionData;
+
+      var connectionObject = dbConnection();
+      let action_sql = "UPDATE task SET done = ? WHERE id = ?"
+      connectionObject.query(action_sql,
+        [
+          data.newVal,
+          data.task_id
         ],
         async function (err, result) {
           if (err) {
