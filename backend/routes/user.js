@@ -21,7 +21,6 @@ router.use(cookieParser());
 router
   .route("/register")
   .get((req, res) => {
-  console.log("hey");
   })
   .post(async function(req, res) {
     var connectionObject = dbConnection();
@@ -34,8 +33,6 @@ router
     let inset_token_sql = 'insert into auth(user_id, secret, otpauth_url) values (?,?,?)';
 
     let pwd_info = encryptPassword(data);
-
-    console.log(pwd_info)
 
     let generatedSecret = speakeasy.generateSecret();
     connectionObject.query(action_sql,
@@ -61,7 +58,6 @@ router
               generatedSecret.otpauth_url
             ],
             function (err, result) {
-              console.log(result);
               if (err) {
                 console.log(err);
 
@@ -77,14 +73,11 @@ router
         connectionObject.end();
 
       })
-
-    console.log("hey2222");
   })
 
 router
   .route("/login")
   .get((req, res) => {
-    console.log("hey");
   })
   .post((req, res) => {
     var connectionObject = dbConnection();
@@ -145,7 +138,6 @@ router
 router
   .route("/countUsername")
   .get((req, res) => {
-    console.log("hey");
   })
   .post((req, res) => {
     var connectionObject = dbConnection();
@@ -170,7 +162,6 @@ router
 router
   .route("/countEmail")
   .get((req, res) => {
-    console.log("hey");
   })
   .post((req, res) => {
     var connectionObject = dbConnection();

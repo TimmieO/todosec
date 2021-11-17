@@ -59,8 +59,6 @@ router
       }
       let data = req.body.val;
 
-      console.log(data);
-
       var connectionObject = dbConnection();
       let action_sql = "UPDATE user SET username = ?, firstname=?, lastname=?, email=?, access_level=? WHERE user_id = ?"
       connectionObject.query(action_sql,
@@ -77,7 +75,6 @@ router
           console.log(err)
         }
         else{
-          console.log(result);
         }
       })
 

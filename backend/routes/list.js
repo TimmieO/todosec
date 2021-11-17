@@ -26,7 +26,6 @@ router
       }
 
       let data = req.body.listData;
-      console.log(data);
 
       var connectionObject = dbConnection();
 
@@ -61,8 +60,6 @@ router
       }
       let data = req.body.editData;
 
-      console.log(data);
-
       var connectionObject = dbConnection();
       let action_sql = "UPDATE list SET title = ? WHERE id = ?"
       connectionObject.query(action_sql,
@@ -95,8 +92,6 @@ router
         return res.status(401).send("Access denied");
       }
       let list_id = req.body.actionData;
-
-      console.log(list_id, "hey");
 
       var connectionObject = dbConnection();
       let action_sql = "DELETE FROM list WHERE id = ?"

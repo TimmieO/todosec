@@ -126,10 +126,8 @@ router
           connectionObject.query(action_sql, [user_id], async function (err, result) {
             if (err) {
               console.log(err)
-              console.log(user_id)
             }
             else {
-              console.log(user_id)
               retObj.task = result;
               res.json({retObj})
             }

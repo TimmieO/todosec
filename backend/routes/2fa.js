@@ -47,11 +47,9 @@ router
               if (verified) {
                 let accessToken = await jwt.sign({user: decoded.user, user_id: decoded.user_id, level: decoded.level, auth: true, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 12)}, process.env.ACCESS_TOKEN_SECRET)
                 res.cookie('SID', accessToken, {maxAge: 1000 * 60 * 60 * 24, httpOnly: true});
-                console.log(accessToken);
                 res.json({verified: true});
               }
               if (!verified) {
-                console.log("hey");
                 res.json({verified: false})
               }
             }

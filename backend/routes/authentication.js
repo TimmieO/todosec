@@ -9,6 +9,7 @@ const qrcode = require('qrcode');
 
 const speakeasy = require('speakeasy')
 
+
 const loadIniFile = require('read-ini-file');
 const path = require('path')
 
@@ -66,15 +67,10 @@ router
         res.cookie('logged_in', true, {httpOnly: true});
       }
 
-      console.log(decoded);
-      console.log(path)
-
       //no access to login or register when logged in
       if(decoded.level > 0 && Number(accessIni.Access[data]) < 0){
         return res.json({access:false, path: path});
       }
-
-      console.log(decoded.level, Number(accessIni.Access[data]));
 
       if(decoded.level >= Number(accessIni.Access[data])){ //Access
 
