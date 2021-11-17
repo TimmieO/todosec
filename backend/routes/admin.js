@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
 const mysql = require("mysql");
 
+const logHelper = require('../functions/logHelper');
 
 require('dotenv').config({path: '../../.env'});
 
@@ -15,14 +16,14 @@ router.use(cookieParser());
 router
   .route("/delete")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("admin.js", "Warning", "Delete NOT supposed to be GET")
     return res.status(404);
   })
   .post(async (req, res) => {
     const cookies = req.cookies;
     jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
       if(decoded.level < 5){
-        console.log("hey")
+        logHelper("admin.js", "Warning", "Access to DELETE with too low of a level")
       }
 
       let data = req.body;
@@ -34,6 +35,7 @@ router
         [data.id],
         function (err, result) {
           if (err) {
+            logHelper("admin.js", "Warning", err)
             console.log(err);
           }
           else{
@@ -48,13 +50,14 @@ router
 router
   .route("/update")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("admin.js", "Warning", "Update NOT supposed to be GET")
     return res.status(404);
   })
   .post(async (req, res) => {
     const cookies = req.cookies;
     jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
-      if(decoded.level != 5){
+      if(decoded.level < 5){
+        logHelper("admin.js", "Warning", "Access to UPDATE with too low of a level")
         return res.status(401).send("Access denied");
       }
       let data = req.body.val;
@@ -72,6 +75,7 @@ router
         ],
         async function (err, result) {
         if (err) {
+          logHelper("admin.js", "Warning", err)
           console.log(err)
         }
         else{

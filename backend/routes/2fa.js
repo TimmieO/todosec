@@ -9,6 +9,8 @@ const speakeasy = require('speakeasy')
 
 require('dotenv').config({path: '../../.env'});
 
+const logHelper = require('../functions/logHelper');
+
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 router.use(cookieParser());
@@ -16,7 +18,7 @@ router.use(cookieParser());
 router
   .route("/validate")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("2fa.js", "Warning", "Validate NOT supposed to be Get")
     return res.status(404);
   })
   .post(async (req, res) => {
@@ -30,6 +32,7 @@ router
       let action_sql = "SELECT secret FROM auth WHERE user_id = ?"
       connectionObject.query(action_sql, [user_id], async function (err, result) {
         if (err) {
+          logHelper("2fa.js", "Warning", err)
           console.log(err)
         }
         else {
@@ -54,6 +57,7 @@ router
               }
             }
             catch (error){
+              logHelper("2fa.js", "Warning", error)
             }
 
           }else{

@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser')
 const mysql = require("mysql");
 
+const logHelper = require('../functions/logHelper');
 
 require('dotenv').config({path: '../../.env'});
 
@@ -15,14 +16,17 @@ router.use(cookieParser());
 router
   .route("/add")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("task.js", "Warning", "Add not supposed to be GET")
+
     return res.status(404);
   })
   .post(async (req, res) => {
     const cookies = req.cookies;
     jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
-      if(decoded.level < 5){
-        console.log("hey")
+      if(decoded.level < 1){
+        logHelper("task.js", "Warning", "Access to Add with too low level")
+
+        return res.status(401).send("Access denied");
       }
 
       let data = req.body.listData;
@@ -34,6 +38,8 @@ router
         [data.list_id, decoded.user_id, data.title, 0],
         function (err, result) {
           if (err) {
+            logHelper("task.js", "Warning", err)
+
             console.log(err);
             return res.json({success: false})
           }
@@ -49,13 +55,16 @@ router
 router
   .route("/update")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("task.js", "Warning", "Update not supposed to be GET")
+
     return res.status(404);
   })
   .post(async (req, res) => {
     const cookies = req.cookies;
     jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
       if(decoded.level < 1){
+        logHelper("task.js", "Warning", "Access to Update with too low level")
+
         return res.status(401).send("Access denied");
       }
       let data = req.body.editData;
@@ -69,6 +78,8 @@ router
         ],
         async function (err, result) {
           if (err) {
+            logHelper("task.js", "Warning", err)
+
             console.log(err)
           }
           else{
@@ -82,13 +93,16 @@ router
 router
   .route("/delete")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("task.js", "Warning", "Delete not supposed to be GET")
+
     return res.status(404);
   })
   .post(async (req, res) => {
     const cookies = req.cookies;
     jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
       if(decoded.level < 1){
+        logHelper("task.js", "Warning", "Access to Delete with too low level")
+
         return res.status(401).send("Access denied");
       }
       let task_id = req.body.actionData;
@@ -101,6 +115,8 @@ router
         ],
         async function (err, result) {
           if (err) {
+            logHelper("task.js", "Warning", err)
+
             console.log(err)
           }
           else{
@@ -114,13 +130,16 @@ router
 router
   .route("/done")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("task.js", "Warning", "Done not supposed to be GET")
+
     return res.status(404);
   })
   .post(async (req, res) => {
     const cookies = req.cookies;
     jwt.verify(cookies.SID, process.env.ACCESS_TOKEN_SECRET, async function(err, decoded){
       if(decoded.level < 1){
+        logHelper("task.js", "Warning", "Access to Done with too low level")
+
         return res.status(401).send("Access denied");
       }
       let data = req.body.actionData;
@@ -134,6 +153,8 @@ router
         ],
         async function (err, result) {
           if (err) {
+            logHelper("task.js", "Warning", err)
+
             console.log(err)
           }
           else{

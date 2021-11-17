@@ -5,16 +5,15 @@ const jwt = require('jsonwebtoken');
 const CryptoJS = require("crypto-js");
 const cookieParser = require('cookie-parser')
 
-const qrcode = require('qrcode');
+const userAction = require('../functions/userActions');
 
-const speakeasy = require('speakeasy')
-
+const logHelper = require('../functions/logHelper');
 
 const loadIniFile = require('read-ini-file');
 const path = require('path')
 
-const accessFile = path.join(__dirname, '../access.ini')
-const accessIni = loadIniFile.sync(accessFile)
+const settingsFile = path.join(__dirname, '../settings.ini')
+const settingsIni = loadIniFile.sync(settingsFile)
 
 require('dotenv').config({path: '../../.env'});
 
@@ -25,7 +24,8 @@ router.use(cookieParser());
 router
   .route("/access")
   .get(async(req, res) => {
-    throw "Error, not supposed to be GET request";
+    logHelper("authentication.js", "WARNING", "Access not supposed to be GET")
+
     return res.status(404);
   })
   .post(async (req, res) => {
@@ -33,6 +33,7 @@ router
     let path = req.body.path;
     let data = path.substring(1);
 
+    userAction.userActions({ip: req.ip, action: "access"});
     //replace / with home
     if(path == "/"){
       data = "home";
@@ -43,10 +44,10 @@ router
       let accessToken = await jwt.sign({user: 'guest', level: 0, exp: Math.floor(Date.now() / 1000) + (60 * 60)}, process.env.ACCESS_TOKEN_SECRET)
       res.cookie('SID', accessToken, {maxAge: 1000 * 60 * 60 * 24, httpOnly: true});
       res.cookie('logged_in', false, {httpOnly: true});
-      if(Number(accessIni.Access[data]) <= 0){
+      if(Number(settingsIni.Access[data]) <= 0){
         return res.json({access: true, path: path})
       }
-      else if(Number(accessIni.Access[data]) > 0){
+      else if(Number(settingsIni.Access[data]) > 0){
         return res.json({access: false, path: path})
       }
       else{
@@ -68,11 +69,11 @@ router
       }
 
       //no access to login or register when logged in
-      if(decoded.level > 0 && Number(accessIni.Access[data]) < 0){
+      if(decoded.level > 0 && Number(settingsIni.Access[data]) < 0){
         return res.json({access:false, path: path});
       }
 
-      if(decoded.level >= Number(accessIni.Access[data])){ //Access
+      if(decoded.level >= Number(settingsIni.Access[data])){ //Access
 
         if(decoded.auth != undefined && decoded.auth == false){ //Make sure auth is active
           if(path == '/auth'){ //if path is auth return access true
@@ -88,10 +89,11 @@ router
 
         return res.json({access: true, path: path})
       }
-      else if(decoded.level <= Number(accessIni.Access[data])){ //Access level too low
+      else if(decoded.level <= Number(settingsIni.Access[data])){ //Access level too low
         return res.json({access: false, path: path})
       }
       else{
+        logHelper("authentication.js", "WARNING", "Failure to find value")
         return res.json({error: true});
       }
     });
