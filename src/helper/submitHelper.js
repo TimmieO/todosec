@@ -98,10 +98,7 @@ async function submitRegister(data){
 }
 
 async function submitLogin(data){
-  //Check in regInfo state object if find Ok that == false
-  if(ValidateAllInput(data, false) == true){
-    return;
-  }
+
   const dataVal = {
     username: data.username,
     password: data.password
