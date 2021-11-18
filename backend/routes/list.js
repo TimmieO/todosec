@@ -67,11 +67,12 @@ router
       let data = req.body.editData;
 
       var connectionObject = dbConnection();
-      let action_sql = "UPDATE list SET title = ? WHERE id = ?"
+      let action_sql = "UPDATE list SET title = ? WHERE id = ? AND user_id = ?"
       connectionObject.query(action_sql,
         [
           data.title,
           data.list_id,
+          decoded.user_id
         ],
         async function (err, result) {
           if (err) {
@@ -105,10 +106,11 @@ router
       let list_id = req.body.actionData;
 
       var connectionObject = dbConnection();
-      let action_sql = "DELETE FROM list WHERE id = ?"
+      let action_sql = "DELETE FROM list WHERE id = ? AND user_id = ?"
       connectionObject.query(action_sql,
         [
-          list_id
+          list_id,
+          decoded.user_id
         ],
         async function (err, result) {
           if (err) {

@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 let router = express.Router();
 const jwt = require('jsonwebtoken');
-const CryptoJS = require("crypto-js");
 const cookieParser = require('cookie-parser')
 
 const userAction = require('../functions/userActions');
